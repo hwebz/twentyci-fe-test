@@ -45,7 +45,6 @@ export const LoginContextProvider = ({ children }) => {
         setLoading(true);
         const loggedIn = sessionStorage.getItem(LOGGED_IN_USER);
 
-        
         timeout = setTimeout(() => {
             if (loggedIn && user) {
                 sessionStorage.removeItem(LOGGED_IN_USER);
