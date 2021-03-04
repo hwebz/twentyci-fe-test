@@ -1,12 +1,12 @@
 import React, { useContext, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 
 import { LOGIN_URL } from 'actions/constants';
 import { LoginContext } from 'contexts/LoginContext';
 
 const Dashboard = () => {
     const history = useHistory();
-    const { user } = useContext(LoginContext);
+    const { loading, user, doLogout } = useContext(LoginContext);
 
     /*eslint-disable */
     useEffect(() => {
@@ -14,8 +14,31 @@ const Dashboard = () => {
     }, [])
     /*eslint-enable */
 
+    const handleLogout = () => {
+        doLogout(() => {
+            history.push(LOGIN_URL);
+        });
+    }
+
     return (
         <div className="tw__dashboard-page">
+            <header>
+                <div class="navbar navbar-dark bg-dark shadow-sm">
+                    <div class="container d-flex justify-content-between">
+                        <Link href={LOGIN_URL} class="navbar-brand d-flex align-items-center">
+                            <strong>TwentyCI FE Test</strong>
+                        </Link>
+                        <div className="pull-right">
+                            <button
+                                className={`btn btn-secondary ${loading ? 'disabled' : ''}`}
+                                onClick={handleLogout}
+                            >
+                                {loading ? 'Signing Out...' : 'Sign Out'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </header>
             <div className="container">
                 <h1 className="mb-4 text-center mt-4">Posts Management</h1>
                 <div className="btns text-right mb-3">

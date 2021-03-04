@@ -27,7 +27,6 @@ export const LoginContextProvider = ({ children }) => {
         setLoading(true);
         
         timeout = setTimeout(() => {
-            debugger;
             if (username === auth.username
                 && password === auth.password) {
                 setUser(username);
@@ -39,16 +38,23 @@ export const LoginContextProvider = ({ children }) => {
             }
             setLoading(false);
             clearTimeout(timeout);
-        })
+        }, 2000);
     }
 
-    const doLogout = () => {
+    const doLogout = callback => {
+        setLoading(true);
         const loggedIn = sessionStorage.getItem(LOGGED_IN_USER);
 
-        if (loggedIn && user) {
-            sessionStorage.removeItem(LOGGED_IN_USER);
-            setUser(null);
-        }
+        
+        timeout = setTimeout(() => {
+            if (loggedIn && user) {
+                sessionStorage.removeItem(LOGGED_IN_USER);
+                setUser(null);
+                if (callback) callback();
+            }
+            setLoading(false);
+            clearTimeout(timeout);
+        }, 2000);
     }
 
     return (

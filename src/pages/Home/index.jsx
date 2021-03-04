@@ -8,7 +8,7 @@ import { DASHBOARD_URL } from 'actions/constants';
 const Home = () => {
     const history = useHistory();
     const { register, handleSubmit, errors } = useForm();
-    const { doLogin, user } = useContext(LoginContext);
+    const { loading, doLogin, user } = useContext(LoginContext);
 
     /*eslint-disable */
     useEffect(() => {
@@ -59,7 +59,7 @@ const Home = () => {
                                     />
                                     {errors.password && <div class="invalid-feedback">Password is required and at least 3 characters, maximum is 16 characters</div>}
                                 </div>
-                                <button type="submit" className="btn btn-primary d-block w-100">Login</button>
+                                <button type="submit" className={`btn btn-primary d-block w-100 ${loading ? 'disabled' : ''}`}>{loading ? 'Logging In...' : 'Login'}</button>
                             </form>
                         </div>
                     </div>
