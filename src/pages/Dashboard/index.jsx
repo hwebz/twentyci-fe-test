@@ -1,6 +1,17 @@
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
+
+import { LOGIN_URL } from 'actions/constants';
+import { LoginContext } from 'contexts/LoginContext';
 
 const Dashboard = () => {
+    const history = useHistory();
+    const { user } = useContext(LoginContext);
+
+    useEffect(() => {
+        if (!user) history.push(LOGIN_URL);
+    }, [])
+
     return (
         <div className="tw__dashboard-page">
             <div className="container">

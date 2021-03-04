@@ -9,6 +9,10 @@ import 'styles/index.scss';
 import {
 	Loading
 } from 'components/Loading';
+import { 
+	LoginContextProvider,
+	PostContextProvider
+} from 'contexts';
 
 const Home = delayImport(import('pages/Home'));
 const Dashboard = delayImport(import('pages/Dashboard'));
@@ -19,7 +23,10 @@ const customHistory = createBrowserHistory();
 const App = () => {
 	return (
 		<Switch>
-			<Route path="/" exact component={Home} />
+			<Route path="/login" exact component={Home}  />
+			<Route path="/" exact>
+				<Redirect to="/login"/>
+			</Route>
 			<Route path="/dashboard" exact component={Dashboard} />
 			<Route path="/not-found" exact component={NotFound} />
 			<Route path="*">
@@ -34,9 +41,13 @@ const AppRootWithRouter = withRouter(App);
 const Root = () => {
 	return (
 		<Suspense fallback={<Loading />}>
-			<Router history={customHistory}>
-				<AppRootWithRouter />
-			</Router>
+			<LoginContextProvider>
+				<PostContextProvider>
+					<Router history={customHistory}>
+						<AppRootWithRouter />
+					</Router>
+				</PostContextProvider>
+			</LoginContextProvider>
 		</Suspense>
 	)
 }
