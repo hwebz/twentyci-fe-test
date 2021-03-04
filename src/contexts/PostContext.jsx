@@ -1,67 +1,77 @@
+import React, { createContext, useEffect, useState } from 'react';
 
 import { POSTS } from 'actions/constants';
-import React, { createContext, useState } from 'react';
-
 export const PostContext = createContext();
 
 export const PostContextProvider = ({ children }) => {
-    const [loading, setLoading] = useState(false);
+    const [postLoading, setLoading] = useState(false);
     const [posts, setPosts] = useState([]);
     const [post, setPost] = useState();
 
     let timeout = null;
 
+    /*eslint-disable */
+    useEffect(() => {
+        const posts = localStorage.getItem(POSTS);
+        if (posts) {
+            const jsonPosts = JSON.parse(posts);
+            setPosts(jsonPosts);
+        }
+    }, [])
+    /*eslint-enable */
+
     const doAddPost = (post, callback) => {
         setLoading(true);
 
         timeout = setTimeout(() => {
-            setPosts(oldPosts => [...oldPosts, {
+            const newPosts = [...posts, {
                 id: (new Date().getTime()).toString(),
                 ...post
-            }]);
-            localStorage.setItem(POSTS, JSON.stringify(posts));
-
-            setLoading(false);
-            clearTimeout(timeout);
-        }, 2000);
-    }
-
-    const doUpdatePost = (postId, callback, errorCallback) => {
-        setLoading(true);
-        
-        timeout = setTimeout(() => {
-            const selectedPost = posts.find(p => p.Id === postId);
-            if (selectedPost) errorCallback(`Can't find the post with id ${postId}`);
-            
-            const newPosts = posts.map(p => {
-                if (p.id === selectedPost.id) return selectedPost;
-                return p;
-            });
+            }];
             setPosts(newPosts);
             localStorage.setItem(POSTS, JSON.stringify(newPosts));
 
+            if (callback) callback();
+
             setLoading(false);
             clearTimeout(timeout);
-        }, 2000);
+        }, 1000);
     }
 
-    const doDeletePost = (postId, callback) => {
+    const doUpdatePost = (post, callback, errorCallback) => {
         setLoading(true);
         
         timeout = setTimeout(() => {
-            const filteredPosts = posts.filter(p => p.id !== postId);
-            setPosts(filteredPosts);
-            localStorage.setItem(POSTS, JSON.stringify(filteredPosts));
+            const selectedPost = posts.find(p => p.id === post.id);
+            if (!selectedPost) errorCallback(`Can't find the post with id ${post.id}`);
+
+            const newPosts = posts.map(p => {
+                if (p.id === selectedPost.id) return post;
+                return p;
+            });
+
+            setPosts(newPosts);
+            localStorage.setItem(POSTS, JSON.stringify(newPosts));
+
+            if (callback) callback(post);
 
             setLoading(false);
             clearTimeout(timeout);
-        }, 2000);
+        }, 1000);
+    }
+
+    const doDeletePost = (postId, callback) => {
+        const filteredPosts = posts.filter(p => p.id !== postId);
+        setPosts(filteredPosts);
+        localStorage.setItem(POSTS, JSON.stringify(filteredPosts));
+        
+        if (callback) callback();
     }
 
     return (
         <PostContext.Provider
             value={{
-                loading,
+                postLoading,
                 posts,
                 post,
                 setPost,
