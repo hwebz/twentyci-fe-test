@@ -8,9 +8,11 @@ const Dashboard = () => {
     const history = useHistory();
     const { user } = useContext(LoginContext);
 
+    /*eslint-disable */
     useEffect(() => {
         if (!user) history.push(LOGIN_URL);
     }, [])
+    /*eslint-enable */
 
     return (
         <div className="tw__dashboard-page">
